@@ -10,9 +10,13 @@ permissions:
 
 jobs:
   release:
-    uses: HMLabs-Gaming/release-workflows/resourcepacks/release.yml@main
+    uses: HMLabs-Gaming/release-workflows/.github/workflows/release-artifacts.yml@main
     with:
       project-slug: js-green-diamond-ore
       modrinth-project-id: Y1SwGfzf
       curseforge-project-id: "1686185"
+      use-java: false
+      build-command: |
+        bash .release-workflows/scripts/build-resourcepack.sh
+      artifacts-json: '[{"path":"js-green-diamond-ore-{version}.zip"}]'
     secrets: inherit
