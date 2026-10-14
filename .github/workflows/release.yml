@@ -1,5 +1,6 @@
 # Caller example: copy to the consuming resource-pack repository at .github/workflows/release.yml.
 name: Resource Pack Release
+
 on:
   release:
     types: [published]
@@ -16,7 +17,16 @@ jobs:
       curseforge-project-id: "1686185"
       use-java: false
       build-command: |
-        version="\${GITHUB_REF_NAME#v}"
-        zip -qr "js-green-diamond-ore-\${version}.zip" pack.mcmeta assets pack.png
+        set -Eeuo pipefail
+
+        version="$(python3 -c 'import json; print(json.load(open("meta.json", encoding="utf-8"))["version"])')"
+        tag_version="${GITHUB_REF_NAME#v}"
+
+        if [ "$version" != "$tag_version" ]; then
+          echo "::error::meta.json version ($version) does not match the release tag ($tag_version)."
+          exit 1
+        fi
+
+        zip -qr "js-green-diamond-ore-${version}.zip" pack.mcmeta assets pack.png
       artifacts-json: '[{"path":"js-green-diamond-ore-{version}.zip"}]'
     secrets: inherit
